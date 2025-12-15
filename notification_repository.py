@@ -1,12 +1,19 @@
-from dataclasses import dataclass
+import asyncio
+import time
+
 from bisect import insort_left
 from operator import attrgetter
 
 
-@dataclass
 class Notification:
-    due: int
-    message: str
+
+    def __init__(self, due: int, message: str):
+        self.due = due
+        self.message = message
+
+    async def wait_for_due(self):
+        current_delta = self.due - time.time()
+        await asyncio.sleep(current_delta)
 
 
 class Scheduler:
