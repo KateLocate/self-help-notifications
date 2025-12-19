@@ -1,5 +1,4 @@
 import asyncio
-import sys
 
 from notification_crud_operations import NotificationManager
 
