@@ -11,9 +11,11 @@ class Notification:
         self.due = due
         self.message = message
 
-    async def wait_for_due(self):
+    async def wait_then_output(self):
         current_delta = self.due - time.time()
-        await asyncio.sleep(current_delta)
+        if current_delta > 0:
+            await asyncio.sleep(current_delta)
+            print(self.message)
 
 
 class Scheduler:
