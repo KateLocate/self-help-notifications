@@ -20,8 +20,7 @@ class NotificationAsyncIO:
         await self.notify()
 
     async def notify(self):
-        notification = self.notification_manager.get_next_notification()
-        if notification:
+        if notification := self.notification_manager.get_next_notification():
             asyncio.create_task(notification.wait_then_output())
 
 
