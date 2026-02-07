@@ -1,14 +1,14 @@
 import asyncio
 import time
 
-from bisect import insort_left
+from bisect import insort_left, bisect_right
 from operator import attrgetter
 
 
 class Notification:
 
-    def __init__(self, due: int, message: str):
-        self.due = due
+    def __init__(self, delta: int, message: str):
+        self.due = time.time() + delta
         self.message = message
 
     async def wait_then_output(self):
@@ -31,3 +31,7 @@ class Scheduler:
             return self.ordered_notifications.pop(0)
         except IndexError:
             return None
+
+    def get_ready_notifications(self):
+        ready_idx = bisect_right(self.ordered_notifications, time.time(), key=attrgetter('due'))
+        return self.ordered_notifications[:ready_idx+1]
