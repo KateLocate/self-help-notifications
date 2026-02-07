@@ -9,8 +9,10 @@ class NotificationManager:
         self.scheduler = Scheduler()
 
     def create_notification(self, delta, message) -> None:
-        due = time.time() + delta
-        self.scheduler.create_notification(due, message)
+        self.scheduler.create_notification(delta, message)
 
     def get_next_notification(self):
         return self.scheduler.get_next_notification()
+
+    def get_ready_notifications(self):
+        return self.scheduler.get_ready_notifications()
