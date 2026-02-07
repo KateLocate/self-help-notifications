@@ -1,5 +1,3 @@
-import time
-
 from notification_repository import Scheduler
 
 
