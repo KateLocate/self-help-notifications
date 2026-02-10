@@ -2,7 +2,7 @@ import asyncio
 
 from notification_crud_operations import NotificationManager
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, WebSocket, HTTPException
 
 
 class NotificationAsyncIO:
@@ -35,6 +35,17 @@ notificationsIO = NotificationAsyncIO()
 def get_received_notifications():
     notifications = notificationsIO.notification_manager.get_ready_notifications()
     return {"notifications": notifications}
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await notificationsIO.get_next_notification_in_time()
+        if data:
+            await websocket.send_text(f"Notification text: {data}")
+        else:
+            await asyncio.sleep(1)
 
 
 @app.post("/notification")
