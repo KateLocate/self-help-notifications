@@ -4,6 +4,23 @@ import time
 from bisect import insort_left, bisect_right
 from operator import attrgetter
 
+from pymongo import MongoClient
+
+
+class MongoNotifications:
+    instance = None
+
+    def __new__(cls):
+        if cls.instance is None:
+            cls.instance = super().__new__(cls)
+        return cls.instance
+
+    def __init__(self):
+        mongo_client = MongoClient('mongodb://localhost:27017/')
+        mongo_db = mongo_client['notification_app_db']
+        collection = mongo_db['notifications']
+        init_record = collection.insert_one({'test_record': 'hello world!'})
+
 
 class Notification:
 
@@ -33,4 +50,4 @@ class Scheduler:
 
     def get_ready_notifications(self):
         ready_idx = bisect_right(self.ordered_notifications, time.time(), key=attrgetter('due'))
-        return self.ordered_notifications[:ready_idx+1]
+        return self.ordered_notifications[:ready_idx + 1]
