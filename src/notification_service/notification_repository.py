@@ -15,7 +15,6 @@ class Notification:
         current_delta = self.due - time.time()
         if current_delta > 0:
             await asyncio.sleep(current_delta)
-        print(self.message)
 
 
 class Scheduler:
