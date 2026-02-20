@@ -43,17 +43,17 @@ class Notification:
 
 class NotificationOperations:
 
-    def __init__(self, notification_repository):
-        self.notification_repository = notification_repository
+    def __init__(self, notification_collection):
+        self.notification_collection = notification_collection
 
     async def create_notification(self, due_time: int, message: str) -> None:
         notification = Notification(due_time, message)
-        await self.notification_repository.insert_one({TIME: notification.due, MESSAGE: notification.message})
+        await self.notification_collection.insert_one({TIME: notification.due, MESSAGE: notification.message})
 
     async def get_next_notification(self) -> Notification | None:
-        if mongo_doc := await self.notification_repository.find_one({TIME: {'$gt': time.time()}}):
+        if mongo_doc := await self.notification_collection.find_one():
             notification = Notification(mongo_doc[TIME], mongo_doc[MESSAGE])
-            await self.notification_repository.delete_one(mongo_doc)
+            await self.notification_collection.delete_one(mongo_doc)
             return notification
 
     async def get_next_notification_in_time(self) -> str | None:
@@ -61,8 +61,8 @@ class NotificationOperations:
             await asyncio.create_task(notification.wait_then_output())
             return notification.message
 
-    def get_ready_notifications(self) -> List[Notification] | None:
-        if mongo_docs := self.notification_repository.find({TIME: {'$gt': time.time()}}):
+    async def get_ready_notifications(self) -> List[Notification] | None:
+        if mongo_docs := await self.notification_collection.find({TIME: {'$gt': time.time()}}):
             notifications = []
             for mongo_doc in mongo_docs:
                 notifications.append(Notification(mongo_doc[TIME], mongo_doc[MESSAGE]))
