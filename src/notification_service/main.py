@@ -3,7 +3,7 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, HTTPException
 
-from notification_repository import NotificationOperations, MongoManager, NotificationRepository
+from notification_service.notification_repository import NotificationOperations, MongoManager, NotificationRepository
 
 
 class Container:

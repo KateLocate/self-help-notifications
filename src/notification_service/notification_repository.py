@@ -5,7 +5,7 @@ from typing import List
 
 from pymongo import AsyncMongoClient, ASCENDING
 
-from constants import TIME, MESSAGE
+from notification_service.constants import TIME, MESSAGE
 
 
 class MongoManager:
