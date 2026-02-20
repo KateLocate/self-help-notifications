@@ -62,7 +62,7 @@ class NotificationOperations:
             return notification.message
 
     async def get_ready_notifications(self) -> List[Notification] | None:
-        if mongo_docs := await self.notification_collection.find({TIME: {'$gt': time.time()}}):
+        if mongo_docs := await self.notification_collection.find({TIME: {'$gt': time.time()}}).to_list(length=None):
             notifications = []
             for mongo_doc in mongo_docs:
                 notifications.append(Notification(mongo_doc[TIME], mongo_doc[MESSAGE]))
