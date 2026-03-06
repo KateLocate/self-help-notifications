@@ -34,7 +34,7 @@ async def add_notification(body: dict):
     notification_text = body.get('message')
     notification_timedelta = body.get('timedelta')
     if not notification_text or not notification_timedelta:
-        raise HTTPException(status_code=400, detail='Both "text" and "timedelta" fields are required')
+        raise HTTPException(status_code=400, detail='Both "message" and "timedelta" fields are required')
 
     await container.notification_ops.create_notification(due_time=notification_timedelta, message=notification_text)
     return {'message': 'Item added successfully', 'item': notification_text}
