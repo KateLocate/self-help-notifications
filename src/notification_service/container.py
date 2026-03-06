@@ -1,5 +1,11 @@
+import os
+
+from dotenv import load_dotenv
+
 from notification_service.repository import NotificationOperations, MongoManager, NotificationRepository
 
+
+load_dotenv()
 
 class Container:
 
@@ -10,6 +16,6 @@ class Container:
 
 
 container = Container(
-    mongo_uri='mongodb://localhost:27017',
-    db_name='notifications_db'
+    mongo_uri='mongodb://{}:{}@{}:{}'.format(os.getenv('MONGO_ROOT_USERNAME'), os.getenv('MONGO_ROOT_PASSWORD'), os.getenv('MONGO_HOST'), os.getenv('MONGO_PORT')),
+    db_name=str(os.getenv('MONGO_DB_NAME'))
 )
