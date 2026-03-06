@@ -12,7 +12,6 @@ async def lifespan(app: FastAPI):
     await container.notification_repo.ensure_indexes()
 
     app.state.mongo = mongo
-    app.state.notification_repo = container.notification_repo
 
     yield
 
