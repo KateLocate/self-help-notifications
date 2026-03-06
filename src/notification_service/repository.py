@@ -11,8 +11,11 @@ from notification_service.constants import TIME, MESSAGE
 class MongoManager:
 
     def __init__(self, uri: str, db_name: str):
-        self.client = AsyncMongoClient(uri)
-        self.db = self.client[db_name]
+        try:
+            self.client = AsyncMongoClient(uri)
+            self.db = self.client[db_name]
+        except Exception as e:
+            raise Exception("Unable to perform request due to the following error: ", e)
 
     async def close(self):
         await self.client.close()
