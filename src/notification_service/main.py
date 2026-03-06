@@ -1,37 +1,27 @@
-import asyncio
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
 
-from notification_crud_operations import NotificationManager
-
-
-class NotificationAsyncIO:
-    def __init__(self):
-        self.notification_manager = NotificationManager()
-
-    async def wait_for_input(self):
-        user_input = await asyncio.to_thread(input, "Enter your message:")
-
-        if not user_input.strip():
-            return
-
-        timedelta = int(await asyncio.to_thread(input,"Enter time in seconds:"))
-
-        self.notification_manager.create_notification(timedelta, user_input)
-
-        await self.notify()
-
-    async def notify(self):
-        if notification := self.notification_manager.get_next_notification():
-            asyncio.create_task(notification.wait_then_output())
+from notification_service.container import container
+from notification_service.routers import notifications
 
 
-async def main():
-    notification_io = NotificationAsyncIO()
-    try:
-        while True:
-            await notification_io.wait_for_input()
-    except KeyboardInterrupt:
-        pass
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    mongo = container.mongo
+    
+    await container.notification_repo.ensure_indexes()
+
+    app.state.mongo = mongo
+
+    yield
+
+    await mongo.close()
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+def include_all_routes(app):
+    app.include_router(notifications.router)
+
+
+# Application startup
+app = FastAPI(lifespan=lifespan)
+include_all_routes(app)
